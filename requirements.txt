@@ -10,3 +10,5 @@ tqdm
 h5py
 tables
 httplib2
+flask
+flask_cors
