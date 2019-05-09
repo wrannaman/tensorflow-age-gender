@@ -13,6 +13,11 @@ docker run -ti \
 -p 9090:9090 \
 registry.sugarkubes.io/sugar-cv/tensorflow-age-gender:cpu
 ```
+## Call
+
+```sh
+curl -X POST   http://0.0.0.0:9090/predict   -H 'Content-Type: application/json'   -H 'Authorization: Basic c3VnYXI6a3ViZXM='   -d '{ "get_attributes": true, "url": "https://s3.us-west-1.wasabisys.com/public.sugarkubes/repos/sugar-cv/object-detection/friends.jpg" }' 
+```
 
 ## Google Cloud Run Enabled.
 
