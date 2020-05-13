@@ -1,4 +1,15 @@
 from __future__ import print_function
+import tensorflow as tf
+import os
+
+if os.environ.get('GPU') is not None:
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    config.gpu_options.per_process_gpu_memory_fraction = 0.25
+    if os.environ.get('GPU_FRACTION') is not None:
+        config.gpu_options.per_process_gpu_memory_fraction = float(os.environ.get('GPU_FRACTION'))
+    session = tf.Session(config=config)
+
 from pathlib import Path
 import cv2
 import dlib
@@ -11,7 +22,6 @@ import tensorflow.contrib.util as tf_contrib_util
 import datetime
 import os.path
 import json
-import os
 from flask import Flask, request, send_from_directory, jsonify, Response
 import urllib.request
 from pprint import pprint
@@ -41,6 +51,11 @@ pprint(config)
 basic_auth_username = config["basic_auth_username"] # basic auth username
 basic_auth_password = config["basic_auth_password"]
 
+if os.environ.get('BASIC_AUTH_USERNAME') is not None:
+    basic_auth_username = os.environ.get('BASIC_AUTH_USERNAME')
+
+if os.environ.get('BASIC_AUTH_PASSWORD') is not None:
+    basic_auth_username = os.environ.get('BASIC_AUTH_PASSWORD')
 
 img_size = 64
 width = 8

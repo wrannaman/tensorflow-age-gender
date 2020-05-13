@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.15.2-py3
+FROM tensorflow/tensorflow:1.15.2-gpu-py3
 RUN apt-get update -y && apt install build-essential \
 cmake \
 vim \
@@ -11,5 +11,5 @@ libfontconfig1 -y
 COPY . /age-gender-estimation
 WORKDIR /age-gender-estimation
 EXPOSE 8080
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements-gpu.txt
 CMD ["python3", "api.py"]
