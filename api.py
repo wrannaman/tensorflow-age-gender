@@ -35,8 +35,6 @@ encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 COLOR = (255,92,122)
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-confThreshold = 0.5                      # Confidence threshold default
-nmsThreshold = 0.5
 margin = 0.4
 
 weights_file = "weights.hdf5"
@@ -126,7 +124,6 @@ def predict():
         base64 = ""
         draw = False;
         return_image = False;
-        get_attributes = True;
         global model_loaded
         global model
         global detector_accurate
@@ -136,8 +133,6 @@ def predict():
 
         detector = detector_fast
 
-        global nmsThreshold
-        global confThreshold
 
         if 'url' in json_data:
             url = json_data["url"]
@@ -147,12 +142,6 @@ def predict():
             draw = json_data["draw"]
         if 'return_image' in json_data:
             return_image = json_data["return_image"]
-        if 'get_attributes' in json_data:
-            get_attributes = json_data["get_attributes"]
-        if 'nms' in json_data:
-            nmsThreshold = json_data["nms"]
-        if 'confidence' in json_data:
-            confThreshold = json_data["confidence"]
         if 'face_detector' in json_data:
             face_detector = json_data["face_detector"]
             if face_detector == "accurate":
@@ -229,9 +218,9 @@ def predict():
             _, binframe = cv2.imencode('.jpg', frame)
             base64_bytes = b64encode(binframe)
             base64_string = base64_bytes.decode('utf-8')
-            return jsonify({ "face_detector": face_detector, "confidence": confThreshold, "inference_time": duration, "base64": base64_string, "faces": _faces, "image_size": [width, height] }), 200, {'ContentType': 'application/json'}
+            return jsonify({ "face_detector": face_detector, "inference_time": duration, "base64": base64_string, "faces": _faces, "image_size": [width, height] }), 200, {'ContentType': 'application/json'}
 
-        return jsonify({ "face_detector": face_detector, "confidence": confThreshold, "inference_time": duration, "faces": _faces, "image_size": [width, height] }), 200, {'ContentType': 'application/json'}
+        return jsonify({ "face_detector": face_detector, "inference_time": duration, "faces": _faces, "image_size": [width, height] }), 200, {'ContentType': 'application/json'}
 
     except Exception as exc:
         # 'errors': exc
