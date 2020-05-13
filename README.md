@@ -30,7 +30,7 @@ There are two detectors built into this container. You can toggle between them i
 - For the GPU version, this model needs a minimum of 200MB.
 
 ## Run
-\`\`\`sh
+```sh
 
 #cpu
 docker run -ti \\
@@ -41,34 +41,34 @@ sugarkubes/tensorflow-age-gender:cpu
 nvidia-docker run -ti \\
 -p 9090:9090 \\
 sugarkubes/tensorflow-age-gender:gpu
-\`\`\`
+```
 
 
 ## Routes
 
-\`GET /\`
-\`GET /health\`
-\`GET /healthz\`
+`GET /`
+`GET /health`
+`GET /healthz`
 - Responds with a 200 for healthcheck
 
-\`POST /predict\`
+`POST /predict`
 - Example:
-\`\`\`sh
+```sh
 curl -X POST \\
 http://0.0.0.0:9090/predict \\
 -H 'Content-Type: application/json' \\
 -d '{ "url": "https://s3.us-west-1.wasabisys.com/public.sugarkubes/repos/sugar-cv/object-detection/friends.jpg" }'
-\`\`\`
+```
 
 - Post parameters
-\`\`\`json
+```json
 {
   "face_detector": "fast", # One of ["accurate", "fast"]
   "return_image": true, # use false for production/faster results
   "url": 'https://your-image.jpg', # use url or b64 image
   "b64": "", # base 64 encoded image
 }
-\`\`\`
+```
 
 
 ## ENV Variables
@@ -89,21 +89,21 @@ http://0.0.0.0:9090/predict \\
 
 ## Response
 
-\`\`\`json
+```json
 {
   //         x1   y1   x2   y2   w    h  conf age gender
   "faces": [[451, 0, 914, 452, 463, 514, -1, 37, "M"]],
   "image_size": [1920, 1080],
   "inference_time": 431.462,
 }
-\`\`\`
+```
 
 
 ## Authentication
 - The container comes with the ability to support basic auth.
 - basic auth is disabled by default.
-- to turn it off, set \`BASIC_AUTH_USERNAME=""\` and \`BASIC_AUTH_PASSWORD=""\`
-- to turn it on, set \`BASIC_AUTH_USERNAME="root"\` and \`BASIC_AUTH_PASSWORD="your password"\`
+- to turn it off, set `BASIC_AUTH_USERNAME=""` and `BASIC_AUTH_PASSWORD=""`
+- to turn it on, set `BASIC_AUTH_USERNAME="root"` and `BASIC_AUTH_PASSWORD="your password"`
 
 ## About the container
 - python 3.5.2 (cpu)
@@ -114,4 +114,4 @@ http://0.0.0.0:9090/predict \\
 - intel x86 machines running ubuntu server 18.04 19.04 20.04
 - cuda 10.1
 - cuda 10.2
-- mac 
+- mac
