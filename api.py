@@ -75,6 +75,12 @@ def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
+    if basic_auth_username is None:
+        print("basic auth is none")
+    if basic_auth_password is None:
+        print("basic auth is none")
+    if basic_auth_password is None and basic_auth_username is None:
+        return true
     return username == basic_auth_username and password == basic_auth_password
 
 def authenticate():
