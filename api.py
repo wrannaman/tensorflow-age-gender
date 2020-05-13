@@ -55,7 +55,7 @@ if os.environ.get('BASIC_AUTH_USERNAME') is not None:
     basic_auth_username = os.environ.get('BASIC_AUTH_USERNAME')
 
 if os.environ.get('BASIC_AUTH_PASSWORD') is not None:
-    basic_auth_username = os.environ.get('BASIC_AUTH_PASSWORD')
+    basic_auth_password = os.environ.get('BASIC_AUTH_PASSWORD')
 
 img_size = 64
 width = 8
