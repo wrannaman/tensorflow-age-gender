@@ -24,7 +24,6 @@ import os.path
 import json
 from flask import Flask, request, send_from_directory, jsonify, Response
 import urllib.request
-from pprint import pprint
 from base64 import b64encode, b64decode
 from flask_cors import CORS
 import httplib2
@@ -42,14 +41,8 @@ margin = 0.4
 
 weights_file = "weights.hdf5"
 
-with open('config.json') as f:
-    config = json.load(f)
-
-print("Using configs:")
-pprint(config)
-
-basic_auth_username = config["basic_auth_username"] # basic auth username
-basic_auth_password = config["basic_auth_password"]
+basic_auth_username = "" # basic auth username
+basic_auth_password = ""
 
 if os.environ.get('BASIC_AUTH_USERNAME') is not None:
     basic_auth_username = os.environ.get('BASIC_AUTH_USERNAME')
@@ -79,8 +72,8 @@ def check_auth(username, password):
         print("basic auth is none")
     if basic_auth_password is None:
         print("basic auth is none")
-    if basic_auth_password is None and basic_auth_username is None:
-        return true
+    if basic_auth_password == "" and basic_auth_username == "":
+        return True
     return username == basic_auth_username and password == basic_auth_password
 
 def authenticate():
@@ -94,6 +87,8 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
+        if basic_auth_password == "" and basic_auth_username == "":
+            return f(*args, **kwargs)
         if not auth or not check_auth(auth.username, auth.password):
             return authenticate()
         return f(*args, **kwargs)
@@ -270,8 +265,11 @@ def test():
             {'ContentType': 'application/json'}
 
 if __name__ == '__main__':
-        port = config["port"]
+        port = 8080
+        host = "0.0.0.0"
         if os.environ.get('PORT') is not None:
             port = os.environ.get('PORT')
-        print("running on port", port)
-        app.run(host=config["host"], port=port, debug=False)
+        if os.environ.get('HOST') is not None:
+            port = os.environ.get('HOST')
+        print("running on port", host, port)
+        app.run(host=host, port=port, debug=False)

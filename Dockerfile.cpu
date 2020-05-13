@@ -11,5 +11,9 @@ libfontconfig1 -y
 COPY . /age-gender-estimation
 WORKDIR /age-gender-estimation
 EXPOSE 8080
+ENV HOST=0.0.0.0
+ENV PORT=8080
+ENV BASIC_AUTH_USERNAME=
+ENV BASIC_AUTH_PASSWORD=
 RUN pip3 install -r requirements.txt
 CMD ["python3", "api.py"]
