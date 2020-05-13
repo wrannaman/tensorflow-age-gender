@@ -268,8 +268,8 @@ if __name__ == '__main__':
         port = 8080
         host = "0.0.0.0"
         if os.environ.get('PORT') is not None:
-            port = os.environ.get('PORT')
+            port = int(os.environ.get('PORT'))
         if os.environ.get('HOST') is not None:
-            port = os.environ.get('HOST')
+            host = str(os.environ.get('HOST'))
         print("running on port", host, port)
         app.run(host=host, port=port, debug=False)
