@@ -1,70 +1,74 @@
 # Age Gender Estimation (Tensorflow)
 
-*Tensorflow based Age Gender Model (CPU or GPU Only)*
+*Tensorflow based Age Gender Model (CPU + GPU)*
 
-Only needs ~200MB of GPU memory (more will not make it faster)
-
+## Speed
 | Hardware 	| Inference Time (Milliseconds)
 |----------	|-------------------------------
-| CPU      	| 700ms per person
-| GPU       | 430 ms total
+| CPU      	| 750 (intel i-7)
+| GPU      	| 430 (NVIDIA 2080)
 
-This model's inference time increases sub-linearly with the number of people.
+This model's inference time increases sublinearly with the number of people.
 
+## Accuracy
 | Detection       | Accuracy
 |---------------	|-------------------------------
-| Face - Accurate | 92% (frontal faces) (accurate model)
-| Face - Fast     | 88% (frontal faces) (accurate model)
+| Face - Accurate | ~95% (frontal faces) (accurate model)
+| Face - Fast     | ~90% (frontal faces) (accurate model)
 | Age      	      | +- 5 years
 
-There are two detectors built into this container.
+There are two detectors built into this container. You can toggle between them in the post parameters
+
+## Face Detector
 
 | Model     | Description
 |----------	|-------------------------------
-| Fast      | dlib 98.38% on the Labeled Faces in the Wild benchmark
-| Accurate  | tensorflow cnn face detector 99.38% on the Labeled Faces in the Wild benchmark
+| Fast      | dlib
+| Accurate  | tensorflow based cnn face detector
 
 - The size of the face is 64x64
-- Tensorflow has "allow growth" mode on, so it will dynamically allocate GPU memory.
+- For the GPU version, this model needs a minimum of 200MB.
 
 ## Run
-```sh
+\`\`\`sh
+
+#cpu
 docker run -ti \\
--p 8080:8080 \\
+-p 9090:9090 \\
 sugarkubes/tensorflow-age-gender:cpu
-```
+
+#gpu
+nvidia-docker run -ti \\
+-p 9090:9090 \\
+sugarkubes/tensorflow-age-gender:gpu
+\`\`\`
 
 
 ## Routes
 
-`GET /`
-`GET /health`
-`GET /healthz`
-- Respond with a 200 for healthcheck
+\`GET /\`
+\`GET /health\`
+\`GET /healthz\`
+- Responds with a 200 for healthcheck
 
-`POST /predict`
+\`POST /predict\`
 - Example:
-```sh
+\`\`\`sh
 curl -X POST \\
-http://0.0.0.0:8080/predict \\
+http://0.0.0.0:9090/predict \\
 -H 'Content-Type: application/json' \\
--H 'Authorization: Basic c3VnYXI6a3ViZXM=' \\
--d '{ "get_attributes": true, "url": "https://s3.us-west-1.wasabisys.com/public.sugarkubes/repos/sugar-cv/object-detection/friends.jpg" }'
-```
+-d '{ "url": "https://s3.us-west-1.wasabisys.com/public.sugarkubes/repos/sugar-cv/object-detection/friends.jpg" }'
+\`\`\`
 
 - Post parameters
-```json
+\`\`\`json
 {
-  "confidence": 0.5,
-  "nms": 0.5, # non-max supression
-  "draw": true,
   "face_detector": "fast", # One of ["accurate", "fast"]
-  "get_attributes": true,
   "return_image": true, # use false for production/faster results
   "url": 'https://your-image.jpg', # use url or b64 image
   "b64": "", # base 64 encoded image
 }
-```
+\`\`\`
 
 
 ## ENV Variables
@@ -72,21 +76,11 @@ http://0.0.0.0:8080/predict \\
 | Variable 	   | Default
 |------------  |-------------------------------
 | PORT         | 8080
-| GPU          | None (True for GPU version)
+| HOST         | 0.0.0.0
+| GPU          | "" (true for GPU version)
 | GPU_FRACTION | 0.25 (25% of the gpu will be allocated to this model)
-
-
-## Configs
-Located at `/age-gender-estimateion/config.json`
-```bash
-{
-  "host": "0.0.0.0",
-  "port": 8080,
-  "log": false,
-  "basic_auth_username": "sugar",
-  "basic_auth_password": "kubes"
-}
-```
+| BASIC_AUTH_USERNAME | ""
+| BASIC_AUTH_PASSWORD | ""
 
 ## Google Cloud Run Enabled
 
@@ -95,25 +89,29 @@ Located at `/age-gender-estimateion/config.json`
 
 ## Response
 
-```json
+\`\`\`json
 {
-  "confidence": 0.5,
   //         x1   y1   x2   y2   w    h  conf age gender
   "faces": [[451, 0, 914, 452, 463, 514, -1, 37, "M"]],
   "image_size": [1920, 1080],
-  "inference_time": 1363.462,
+  "inference_time": 431.462,
 }
-```
+\`\`\`
 
 
+## Authentication
+- The container comes with the ability to support basic auth.
+- basic auth is disabled by default.
+- to turn it off, set \`BASIC_AUTH_USERNAME=""\` and \`BASIC_AUTH_PASSWORD=""\`
+- to turn it on, set \`BASIC_AUTH_USERNAME="root"\` and \`BASIC_AUTH_PASSWORD="your password"\`
 
 ## About the container
 - python 3.5.2 (cpu)
 - python 3.5.1 (gpu)
 - tensorflow 1.13.1
--
 
-## validated hosts
-- intel x86 machines running ubuntu server
+## Validated Hosts
+- intel x86 machines running ubuntu server 18.04 19.04 20.04
 - cuda 10.1
 - cuda 10.2
+- mac 
